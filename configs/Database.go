@@ -1,4 +1,4 @@
-Package Configs
+package Configs
 
 import (
 	"log"
@@ -14,23 +14,22 @@ import (
 var DB *gorm.DB
 
 func DatabaseInit() (err error) {
-	var er error
-	er = godotenv.Load()
+	er := godotenv.Load(".env")
 	if er != nil {
-		log.Fatal("Error getting env")
+		log.Fatalf("Error loading .env file")
 	}
-
-	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
+	port, er := strconv.Atoi(os.Getenv("DB_PORT"))
+	if er != nil {
 		log.Fatal("Error Convert PORT")
+		return
 	}
 
-	dsn := os.Getenv("DB_USER") + "@tcp(" + os.Getenv("DB_HOST") + ":" + strconv.Itoa(port) + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := os.Getenv("DB_USER") + "@tcp(" + os.Getenv("DBHOST") + ":" + strconv.Itoa(port) + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	DB = db
 	return err
 }
 
 func DatabaseMigrate() {
-	DB.AutoMigrate(&Models.User{})
+	DB.AutoMigrate(&Models.User{}, &Models.Role{})
 }

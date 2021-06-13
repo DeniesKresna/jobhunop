@@ -1,24 +1,18 @@
 package Models
 
 import (
-	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 
 	"gorm.io/gorm"
 )
 
-func Paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
+func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		pages, ok := r.URL.Query()["page"]
-		var page int = 1
-		if ok && len(pages[0]) > 0 {
-			page, _ = strconv.Atoi(pages[0])
-		}
-		if page == 0 || !ok {
-			page = 1
-		}
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "1"))
 
-		pageSize, _ := strconv.Atoi(r.URL.Query()["page_size"][0])
 		switch {
 		case pageSize > 100:
 			pageSize = 100
