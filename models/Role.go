@@ -17,5 +17,6 @@ func (b *Role) TableName() string {
 }
 
 type RoleUpdate struct {
-	Name string `validate:"required"`
+	Name      string `validate:"required"`
+	CreatorID uint
 }

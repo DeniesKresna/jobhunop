@@ -1,6 +1,8 @@
 package Controllers
 
 import (
+	"strconv"
+
 	"github.com/DeniesKresna/jobhunop/Configs"
 	"github.com/DeniesKresna/jobhunop/Helpers"
 	"github.com/DeniesKresna/jobhunop/Models"
@@ -10,12 +12,17 @@ import (
 )
 
 func UserIndex(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
 	var users []Models.User
-	if err := Configs.DB.Preload("Role").Scopes(Models.Paginate(c)).Find(&users).Error; err != nil {
-		Response.Json(c, 404, "No User data")
-	} else {
-		Response.Json(c, 200, users)
-	}
+	p, _ := (&PConfig{
+		Page:    page,
+		PerPage: pageSize,
+		Path:    c.FullPath(),
+		Sort:    "id desc",
+	}).Paginate(Configs.DB.
+		Preload("Role").Where("id > ?", 0), &users)
+	Response.Json(c, 200, p)
 }
 
 func UserStore(c *gin.Context) {
@@ -25,6 +32,12 @@ func UserStore(c *gin.Context) {
 	v := validate.Struct(user)
 	if !v.Validate() {
 		Response.Json(c, 422, v.Errors.One())
+		return
+	}
+
+	err := Configs.DB.Where("username = ?", user.Username).Or("email = ?", user.Email).First(&Models.User{}).Error
+	if err == nil {
+		Response.Json(c, 404, "Sudah ada user tersebut")
 		return
 	}
 

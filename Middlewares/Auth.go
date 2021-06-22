@@ -29,6 +29,8 @@ func Auth(name string) gin.HandlerFunc {
 
 		if err != nil {
 			Response.Json(c, 500, "Error Parse Token")
+			c.Abort()
+			return
 		}
 
 		if token.Valid {

@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	github.com/biezhi/gorm-paginator/pagination v0.0.0-20190124091837-7a5c8ed20334
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gookit/validate v1.2.11
