@@ -71,3 +71,14 @@ func UserUpdate(c *gin.Context) {
 		Response.Json(c, 200, "Success")
 	}
 }
+
+func UserMe(c *gin.Context) {
+	Response.Json(c, 200, me(c))
+}
+
+func me(c *gin.Context) *Models.User {
+	SetSessionId(c)
+	var user Models.User
+	Configs.DB.Preload("Role").First(&user, SessionId)
+	return &user
+}

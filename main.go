@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	check "github.com/asaskevich/govalidator"
+
 	"github.com/DeniesKresna/jobhunop/Configs"
 	"github.com/DeniesKresna/jobhunop/Routers"
+	check "github.com/asaskevich/govalidator"
 )
 
 func main() {

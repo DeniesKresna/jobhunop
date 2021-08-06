@@ -5,14 +5,20 @@ import (
 )
 
 type ResponseData struct {
-	Status int
-	Data   interface{}
+	Status  int
+	Message string
+	Data    interface{}
 }
 
 func Json(w *gin.Context, status int, payload interface{}) {
 	var res ResponseData
-	res.Data = payload
 	res.Status = status
+	res.Message = ""
+	_, ok := payload.(string)
+	if ok {
+		res.Message = payload.(string)
+	}
+	res.Data = payload
 
 	w.JSON(status, res)
 }

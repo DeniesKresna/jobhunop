@@ -33,7 +33,7 @@ func AuthLogin(c *gin.Context) {
 	}
 
 	var user Models.User
-	err = Configs.DB.Where("email = ?", userLoginInput.Email).First(&user).Error
+	err = Configs.DB.Preload("Role").Where("email = ?", userLoginInput.Email).First(&user).Error
 	if err != nil {
 		Response.Json(c, 404, "wrong email")
 		return

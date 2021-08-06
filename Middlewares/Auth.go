@@ -16,7 +16,7 @@ func Auth(name string) gin.HandlerFunc {
 		const BEARER_SCHEMA = "Bearer"
 		authHeader := c.GetHeader("Authorization")
 		if !strings.Contains(authHeader, BEARER_SCHEMA) {
-			Response.Json(c, 401, "You dont have access")
+			Response.Json(c, 401, "You must login first")
 			c.Abort()
 			return
 		}
@@ -28,7 +28,7 @@ func Auth(name string) gin.HandlerFunc {
 		})
 
 		if err != nil {
-			Response.Json(c, 500, "Error Parse Token")
+			Response.Json(c, 401, "Not allowed access this page")
 			c.Abort()
 			return
 		}
@@ -40,7 +40,7 @@ func Auth(name string) gin.HandlerFunc {
 
 			var user Models.User
 			err = Configs.DB.First(&user, userId).Joins("INNER JOIN roles r ON user.role_id = r.id").
-				Where("r.name = ?", "administrator").Error
+				Where("r.name = ?", "admin").Error
 			if err != nil {
 				Response.Json(c, 404, "User not found")
 				c.Abort()
